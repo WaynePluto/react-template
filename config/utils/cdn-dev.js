@@ -1,6 +1,7 @@
 module.exports = {
   externals: {
     'mockjs': 'Mock',
+
     'axios': 'axios',
   },
   js: [

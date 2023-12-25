@@ -2,9 +2,13 @@ const BaseConfig = require('./base')
 
 const { merge } = require('webpack-merge')
 
+const path = require('path')
+
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 
 const CopyPlugin = require('copy-webpack-plugin')
+
+const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 
 const CompressionPlugin = require('compression-webpack-plugin')
 
@@ -14,51 +18,53 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 
 const TerserPlugin = require('terser-webpack-plugin')
 
-const cdn = require('./cdn-prod')
-
-const esbuild = require('esbuild')
+const cdn = require('./utils/cdn-prod')
 
 /**
  * @type {import('webpack').Configuration}
  */
 module.exports = merge(BaseConfig, {
   mode: 'production',
-  devtool: 'nosources-source-map',
   externals: cdn.externals,
   module: {
     rules: [
-      // ts loader可以从esbuild和swc二选一
-      'babel-loader',
-      // {
-      //   loader: '@swc-node/loader',
-      //   options: {
-      //     compilerOptions: {
-      //       jsx: 'react-jsx', // 生产环境使用react-jsx
-      //     },
-      //     parseMap: true,
-      //   },
-      // },
-      // 这里选择esbuild
       {
-        loader: 'esbuild-loader',
-        options: { implementation: esbuild, jsx: 'automatic' },
+        test: /\.[t|j]sx?$/,
+        use: [
+          'babel-loader',
+          // ts loader可以从esbuild和swc二选一
+          // {
+          //   loader: '@swc-node/loader',
+          //   options: {
+          //     compilerOptions: {
+          //       jsx: 'react-jsxdev', // 生产环境使用react-jsx
+          //     },
+          //   },
+          // },
+          // 这里选择esbuild
+          {
+            loader: 'esbuild-loader',
+            options: { implementation: esbuild, jsx: 'automatic' },
+          },
+        ],
       },
     ],
   },
   plugins: [
-    new BundleAnalyzerPlugin({ analyzerPort: 'auto' }),
+    new CleanWebpackPlugin(),
+    // new BundleAnalyzerPlugin({ analyzerPort: 'auto' }),
     new HtmlWebpackPlugin({
-      title: 'React',
-      template: './public/index.html',
+      title: 'vue-webpack',
+      template: path.join(__dirname, '../public/index.html'),
       inject: 'body',
-      cdn: cdn,
-      base_url: './',
+      cdn,
+      publicPath: './',
     }),
     new CopyPlugin({
       patterns: [{ from: 'public', globOptions: { ignore: ['**/index.html'] } }],
     }),
     new CompressionPlugin({
-      test: /\.js$|\.html$|\.css/,
+      test: /\.js$|\.css/,
       threshold: 10240,
       minRatio: 0.8,
       deleteOriginalAssets: false,
@@ -69,12 +75,17 @@ module.exports = merge(BaseConfig, {
     minimize: true,
     minimizer: [
       new MiniCssExtractPlugin({
-        filename: 'css/[name].css',
-        chunkFilename: 'css/[name]-chunk.css',
+        filename: 'css/[name].[contenthash].css',
+        chunkFilename: 'css/[id].[contenthash].css',
       }),
       new TerserPlugin({
-        minify: TerserPlugin.swcMinify,
-        terserOptions: {},
+        // esbuild minify兼容性有问题, swcMinify测试平台打包报错
+        // minify: TerserPlugin.terserMinify(),
+        terserOptions: {
+          format: { comments: false },
+        },
+        extractComments: false,
+        exclude: ['static'],
       }),
     ],
     splitChunks: {
@@ -82,35 +93,16 @@ module.exports = merge(BaseConfig, {
       minSize: 200 * 2048,
       maxSize: 500 * 2048,
       minChunks: 1,
-      cacheGroups: {
-        // lodash: {
-        //   priority: 1,
-        //   name: 'lodash',
-        //   test: /[\\/]node_modules[\\/]lodash[\\/]/,
-        //   reuseExistingChunk: true,
-        // },
-        // arco: {
-        //   priority: 1,
-        //   name: 'arco',
-        //   test: /[\\/]node_modules[\\/]@arco-design[\\/]web-vue/,
-        //   reuseExistingChunk: true,
-        // },
-        // vendor: {
-        //   name: 'vendors',
-        //   test: /[\\/]node_modules[\\/]/,
-        //   priority: -10,
-        //   reuseExistingChunk: true,
-        // },
-      },
     },
   },
   output: {
     publicPath: './',
     filename: 'js/[name]-[chunkhash].js',
     clean: true,
+    path: path.resolve(__dirname, '../dist'),
   },
   stats: {
-    preset: 'normal',
+    preset: 'summary',
     assets: true,
     colors: true,
   },
