@@ -1,9 +1,10 @@
-import './app.css'
+import './body.css'
+import './index.css'
 
-const reactLogo = require('./assets/react.svg')
-const WebpackLogo = require('./assets/webpack.png')
+const reactLogo = require('@/assets/react.svg')
+const WebpackLogo = require('@/assets/webpack.png')
 
-function App() {
+export function Home() {
   const [count, setCount] = useState(0)
 
   return (
@@ -27,5 +28,3 @@ function App() {
     </>
   )
 }
-
-export default App
