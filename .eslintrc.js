@@ -1,11 +1,14 @@
 module.exports = {
-  'files': ['src/**/*.{js,jsx,ts,tsx,vue}'],
-  'ignores': ['**/*.config.js'],
   'env': {
     'browser': true,
     'es2021': true,
   },
-  'extends': ['eslint:recommended', 'plugin:@typescript-eslint/recommended', 'plugin:vue/base'],
+  'settings': {
+    'react': {
+      'version': 'detect',
+    },
+  },
+  'extends': ['eslint:recommended', 'plugin:@typescript-eslint/recommended', 'plugin:react/recommended'],
   'overrides': [
     {
       'env': {
@@ -17,14 +20,14 @@ module.exports = {
       },
     },
   ],
+  'parser': '@typescript-eslint/parser',
   'parserOptions': {
     'ecmaVersion': 'latest',
-    'parser': '@typescript-eslint/parser',
     'sourceType': 'module',
   },
-  'plugins': ['@typescript-eslint', 'vue'],
+  'plugins': ['@typescript-eslint', 'react'],
   'rules': {
-    'eqeqeq': ['error', 'always'],
-    'no-undef': 'off',
+    'react/react-in-jsx-scope': 'off',
+    '@typescript-eslint/no-var-requires': 'off',
   },
 }

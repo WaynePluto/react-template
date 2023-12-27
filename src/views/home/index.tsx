@@ -10,10 +10,10 @@ export function Home() {
   return (
     <>
       <div>
-        <a href="https://webpack.js.org/" target="_blank">
+        <a href="https://webpack.js.org/" target="_blank" rel="noreferrer">
           <img src={WebpackLogo} className="logo" alt="Webpack logo" />
         </a>
-        <a href="https://react.dev" target="_blank">
+        <a href="https://react.dev" target="_blank" rel="noreferrer">
           <img src={reactLogo} className="logo react" alt="React logo" />
         </a>
       </div>
