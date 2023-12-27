@@ -1,22 +1,17 @@
-import { Home } from '@/views/home'
 import { createBrowserRouter } from 'react-router-dom'
-
-const router = createBrowserRouter([
-  {
-    path: '/',
-    element: <Home />,
-  },
-  {
-    path: '/template',
-    loader: ({ request }) => {
-      const url = new URL(request.url)
-      return { page: url.searchParams.get('page') }
-    },
-    lazy: async () => {
-      const { Template } = await import('@/views/template')
-      return { Component: Template }
-    },
-  },
-])
-
-export default router
+const modules = require.context('./modules', false, /.*\.ts$/)
+async function formatModules(_context: __WebpackModuleApi.RequireContext, result) {
+  const keys = _context.keys()
+  const modules: any[] = []
+  for (const key of keys) {
+    const defaultModule = (await _context(key)).default
+    if (!defaultModule) continue
+    const moduleList = Array.isArray(defaultModule) ? [...defaultModule] : [defaultModule]
+    modules.push(...moduleList)
+  }
+  return [...result, ...modules]
+}
+export async function initRouteModules() {
+  const routes = await formatModules(modules, [])
+  return createBrowserRouter(routes)
+}

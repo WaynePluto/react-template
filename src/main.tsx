@@ -1,10 +1,20 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { RouterProvider } from 'react-router-dom'
-import router from './router'
+import { initRouteModules } from './router'
 
-ReactDOM.createRoot(document.getElementById('app')!).render(
-  <React.StrictMode>
-    <RouterProvider router={router} />
-  </React.StrictMode>,
-)
+async function start() {
+  try {
+    const router = await initRouteModules()
+
+    ReactDOM.createRoot(document.getElementById('app')!).render(
+      <React.StrictMode>
+        <RouterProvider router={router} />
+      </React.StrictMode>,
+    )
+  } catch (error) {
+    //
+  }
+}
+
+start()
