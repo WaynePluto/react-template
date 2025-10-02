@@ -1,10 +1,8 @@
-const target = "http://127.0.0.1:3000";
-
 module.exports = [
   {
-    "/api": {
-      target,
-      changeOrigin: true,
-    },
+    context: ["/api"],
+    target: "http://localhost:3000",
+    pathRewrite: { "^/api": "" },
+    secure: false,
   },
 ];
