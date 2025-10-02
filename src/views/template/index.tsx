@@ -22,9 +22,5 @@ function Consumer() {
 }
 function AddCountCom() {
   const { addCount } = useCountDispatch();
-  return (
-    <>
-      <button onClick={e => addCount(1)}>Add Count</button>
-    </>
-  );
+  return <button onClick={e => addCount()}>Add Count</button>;
 }

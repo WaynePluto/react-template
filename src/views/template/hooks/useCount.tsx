@@ -2,10 +2,11 @@
  * 使用AI生成上下文代码，参考提示词：
  * 帮我封装一个功能到react context中，要有一个状态count, 一个addCount的修改方法。
  * 请将状态和行为进行上下文分离。
- * 最后把你写的typescript代码都写一个useCount.ts中
+ * 不需要使用useCallback,useMemo等优化措施。
+ * 最后把你写的typescript代码都写一个useCount.ts中。
  */
 
-import React, { createContext, useContext, useReducer, useCallback } from "react";
+import React, { createContext, useContext, useReducer } from "react";
 
 // 状态接口
 interface CountState {
@@ -55,18 +56,18 @@ export function CountProvider({ children, initialCount }: CountProviderProps) {
     count: initialCount ?? initialState.count,
   });
 
-  const addCount = useCallback((amount: number = 1) => {
+  const addCount = (amount: number = 1) => {
     dispatch({ type: "ADD_COUNT", payload: amount });
-  }, []);
+  };
 
   const actions: CountActions = {
     addCount,
   };
 
   return (
-    <CountStateContext.Provider value={state}>
-      <CountDispatchContext.Provider value={actions}>{children}</CountDispatchContext.Provider>
-    </CountStateContext.Provider>
+    <CountDispatchContext.Provider value={actions}>
+      <CountStateContext.Provider value={state}>{children}</CountStateContext.Provider>
+    </CountDispatchContext.Provider>
   );
 }
 

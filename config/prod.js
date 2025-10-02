@@ -48,7 +48,7 @@ module.exports = async function () {
                     },
                   ],
                 ],
-                plugins: ["@babel/plugin-transform-runtime"],
+                plugins: ["babel-plugin-react-compiler", "@babel/plugin-transform-runtime"],
               },
             },
             // ts loader可以从esbuild和swc二选一

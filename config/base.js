@@ -39,6 +39,12 @@ const BaseConfig = {
       {
         test: /\.[t|j]sx?$/,
         use: [
+          // {
+          //   loader: "babel-loader",
+          //   options: {
+          //     plugins: ["babel-plugin-react-compiler"],
+          //   },
+          // },
           // ts loader可以从esbuild和swc二选一
           // {
           //   loader: '@swc-node/loader',
