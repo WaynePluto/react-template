@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "cross-env NODE_ENV=development webpack serve --progress --config config/dev.js",
     "build": "cross-env NODE_ENV=production webpack --progress --config config/prod.js",
-    "test": "jest",
+    "test": "cross-env NODE_OPTIONS=--experimental-vm-modules dotenv -e .env jest",
     "lint": "eslint src",
     "commitlint": "commitlint --edit",
     "prepare": "husky install"
@@ -52,6 +52,8 @@
     "core-js": "3.45.1",
     "cross-env": "^10.1.0",
     "css-loader": "^7.1.2",
+    "dotenv": "^17.2.3",
+    "dotenv-cli": "^10.0.0",
     "esbuild": "^0.25.10",
     "esbuild-loader": "^4.3.0",
     "eslint": "^9.36.0",
@@ -65,6 +67,7 @@
     "mockjs": "^1.1.0",
     "portfinder": "^1.0.38",
     "postcss-loader": "^8.2.0",
+    "puppeteer": "^24.23.0",
     "sass": "^1.93.2",
     "sass-loader": "^16.0.5",
     "speed-measure-webpack-plugin": "^1.5.0",

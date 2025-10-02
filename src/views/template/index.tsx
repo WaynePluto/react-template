@@ -6,7 +6,7 @@ export function Template() {
   console.log(`page:${page}`);
 
   return (
-    <CountProvider>
+    <CountProvider initialCount={0}>
       <div className="flex flex-col items-center">
         <span>Hello world! Template page: {page}.</span>
         <Consumer></Consumer>
@@ -18,7 +18,7 @@ export function Template() {
 
 function Consumer() {
   const { count } = useCountState();
-  return <>count:{count}</>;
+  return <span className="text-count">{count}</span>;
 }
 function AddCountCom() {
   const { addCount } = useCountDispatch();
