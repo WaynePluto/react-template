@@ -1,38 +1,37 @@
-const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
-const path = require('path')
+const path = require("path");
 
-const UnAudoImport = require('unplugin-auto-import/webpack')
+const esbuild = require("esbuild");
 
-const esbuild = require('esbuild')
-
-const isProduction = process.env.NODE_ENV === 'production'
+const isProduction = process.env.NODE_ENV === "production";
 
 const stylesHandler = isProduction
   ? {
       loader: MiniCssExtractPlugin.loader,
       options: {
-        publicPath: '../',
+        publicPath: "../",
       },
     }
-  : 'style-loader'
+  : "style-loader";
 
-const baseCssLoader = [stylesHandler, 'css-loader', 'postcss-loader']
+const baseCssLoader = [stylesHandler, "css-loader", "postcss-loader"];
 
 /**
  * @type {import('webpack').Configuration}
  */
-module.exports = {
-  entry: './src/main.tsx',
+const BaseConfig = {
+  entry: "./src/main.tsx",
   resolve: {
+    mainFields: ["module", "main"],
     alias: {
-      '@': path.resolve(__dirname, '../src'),
+      "@": path.resolve(__dirname, "../src"),
     },
-    extensions: ['.ts', '.tsx', '.js', '.mjs', '.vue'],
+    extensions: [".ts", ".tsx", ".js", ".mjs", ".vue"],
     extensionAlias: {
-      '.js': ['.js', '.ts'],
-      '.cjs': ['.cjs', '.cts'],
-      '.mjs': ['.mjs', '.mts'],
+      ".js": [".js", ".ts"],
+      ".cjs": [".cjs", ".cts"],
+      ".mjs": [".mjs", ".mts"],
     },
   },
   module: {
@@ -51,18 +50,18 @@ module.exports = {
           // },
           // 这里选择esbuild
           {
-            loader: 'esbuild-loader',
-            options: { implementation: esbuild, jsx: 'automatic' },
+            loader: "esbuild-loader",
+            options: { implementation: esbuild, jsx: "automatic" },
           },
         ],
       },
       {
         test: /\.less$/i,
-        use: [...baseCssLoader, 'less-loader'],
+        use: [...baseCssLoader, "less-loader"],
       },
       {
         test: /\.s[ac]ss$/i,
-        use: [...baseCssLoader, 'sass-loader'],
+        use: [...baseCssLoader, "sass-loader"],
       },
       {
         test: /\.css$/i,
@@ -70,17 +69,24 @@ module.exports = {
       },
       {
         test: /\.(png|jpe?g|gif|svg|eot|ttf|woff|woff2|mp3)$/i,
-        type: 'asset/resource',
+        type: "asset/resource",
         generator: {
-          filename: 'images/[hash][ext][query]',
+          filename: "images/[hash][ext][query]",
         },
       },
     ],
   },
-  plugins: [
-    UnAudoImport({
-      dts: true,
-      imports: ['react'],
-    }),
-  ],
-}
+  plugins: [],
+};
+
+// webpack.config.js
+module.exports = async function () {
+  const { default: UnoCSS } = await import("@unocss/webpack");
+  return {
+    ...BaseConfig,
+    plugins: [...BaseConfig.plugins, UnoCSS()],
+    optimization: {
+      realContentHash: true,
+    },
+  };
+};

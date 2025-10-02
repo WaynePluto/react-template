@@ -1,11 +1,12 @@
-import './body.css'
-import './index.css'
+import { useState } from "react";
+import "./body.css";
+import "./index.css";
 
-const reactLogo = require('@/assets/react.svg')
-const WebpackLogo = require('@/assets/webpack.png')
+const reactLogo = require("@/assets/react.svg");
+const WebpackLogo = require("@/assets/webpack.png");
 
 export function Home() {
-  const [count, setCount] = useState(0)
+  const [count, setCount] = useState(0);
 
   return (
     <>
@@ -26,5 +27,5 @@ export function Home() {
       </div>
       <p className="read-the-docs">Click on the Webpack and React logos to learn more</p>
     </>
-  )
+  );
 }

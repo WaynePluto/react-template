@@ -1,46 +1,49 @@
-const BaseConfig = require('./base')
-const HtmlWebpackPlugin = require('html-webpack-plugin')
-const FriendlyErrorsWebpackPlugin = require('@nuxt/friendly-errors-webpack-plugin')
-const chalk = require('chalk')
-const path = require('path')
-const portfinder = require('portfinder')
-const { DefinePlugin } = require('webpack')
-const { merge } = require('webpack-merge')
-const cdn = require('./utils/cdn-dev')
-const proxy = require('./utils/proxy')
-const publicPath = '/'
+const getBaseConfig = require("./base");
+const HtmlWebpackPlugin = require("html-webpack-plugin");
+const FriendlyErrorsWebpackPlugin = require("@nuxt/friendly-errors-webpack-plugin");
+const chalk = require("chalk");
+const path = require("path");
+const portfinder = require("portfinder");
+const { DefinePlugin } = require("webpack");
+const { merge } = require("webpack-merge");
+const cdn = require("./utils/cdn-dev");
+const proxy = require("./utils/proxy");
+const publicPath = "/";
 
 /**
  * @type {import('webpack').Configuration & {devServer:import('webpack-dev-server').Configuration}}
  */
 module.exports = async function () {
-  const port = await portfinder.getPortPromise({ port: '8080' })
-  const localUrl = `http://localhost:${port}${publicPath}`
-  const getIPAdress = require('./utils/get-ip')
-  const hostUrl = `http://${getIPAdress()}:${port}${publicPath}`
-
-  return merge(BaseConfig, {
-    mode: 'development',
+  const port = await portfinder.getPortPromise({ port: "8080" });
+  const localUrl = `http://localhost:${port}${publicPath}`;
+  const getIPAdress = require("./utils/get-ip");
+  const hostUrl = `http://${getIPAdress()}:${port}${publicPath}`;
+  const baseConfig = await getBaseConfig();
+  return merge(baseConfig, {
+    mode: "development",
     cache: {
-      type: 'filesystem',
-      allowCollectingMemory: true,
-      buildDependencies: {
-        config: [__filename],
-      },
-      store: 'pack',
+      // type: "filesystem",
+      // allowCollectingMemory: true,
+      // buildDependencies: {
+      //   config: [__filename],
+      // },
+      // store: "pack",
+      // 内存缓存
+      type: "memory",
+      cacheUnaffected: true,
     },
-    devtool: 'eval-source-map',
+    devtool: "eval-source-map",
     output: {
       publicPath: publicPath,
-      filename: 'js/[name].js',
+      filename: "js/[name].js",
       clean: true,
     },
     externals: cdn.externals,
     plugins: [
       new HtmlWebpackPlugin({
-        title: 'react-webpack',
-        template: path.join(__dirname, '../public/index.html'),
-        inject: 'body',
+        title: "react-webpack",
+        template: path.join(__dirname, "../public/index.html"),
+        inject: "body",
         cdn,
         publicPath,
       }),
@@ -49,17 +52,13 @@ module.exports = async function () {
       }),
       new FriendlyErrorsWebpackPlugin({
         compilationSuccessInfo: {
-          messages: [
-            `App running at:`,
-            `- Local: \t${chalk.cyan(localUrl)}`,
-            `- Host: \t${chalk.cyan(hostUrl)}\n`,
-          ],
+          messages: [`App running at:`, `- Local: \t${chalk.cyan(localUrl)}`, `- Host: \t${chalk.cyan(hostUrl)}\n`],
         },
         clearConsole: true,
       }),
     ],
     stats: {
-      preset: 'errors-warnings',
+      preset: "errors-warnings",
       timings: true,
     },
     devServer: {
@@ -73,14 +72,14 @@ module.exports = async function () {
       static: {
         watch: false,
         publicPath,
-        directory: path.join(__dirname, '../public'),
+        directory: path.join(__dirname, "../public"),
       },
       watchFiles: {
         options: {
           ignorePermissionErrors: true,
-          ignored: path.join(__dirname, '../public'),
+          ignored: path.join(__dirname, "../public"),
         },
       },
     },
-  })
-}
+  });
+};

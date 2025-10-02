@@ -1,8 +1,10 @@
-const target = 'http://127.0.0.1:3000'
+const target = "http://127.0.0.1:3000";
 
-module.exports = {
-  '/api': {
-    target,
-    changeOrigin: true,
+module.exports = [
+  {
+    "/api": {
+      target,
+      changeOrigin: true,
+    },
   },
-}
+];

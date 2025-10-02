@@ -1,29 +1,30 @@
-import { useLoaderData } from 'react-router-dom'
-import { atom, useAtom, Provider, useSetAtom } from 'jotai'
+import { useLoaderData } from "react-router-dom";
+import { CountProvider, useCountDispatch, useCountState } from "./hooks/useCount";
 
 export function Template() {
-  const { page } = useLoaderData() as { page: string }
-  console.log(`page:${page}`)
-  return (
-    <div className="flex flex-col items-center">
-      <span>Hello world! Template page: {page}.</span>
-      <Consumer></Consumer>
-      <AddCountCom></AddCountCom>
-    </div>
-  )
-}
+  const { page } = useLoaderData() as { page: string };
+  console.log(`page:${page}`);
 
-const countAtom = atom(0)
+  return (
+    <CountProvider>
+      <div className="flex flex-col items-center">
+        <span>Hello world! Template page: {page}.</span>
+        <Consumer></Consumer>
+        <AddCountCom></AddCountCom>
+      </div>
+    </CountProvider>
+  );
+}
 
 function Consumer() {
-  const [state, setState] = useAtom(countAtom)
-  return <>count:{state}</>
+  const { count } = useCountState();
+  return <>count:{count}</>;
 }
 function AddCountCom() {
-  const setState = useSetAtom(countAtom)
+  const { addCount } = useCountDispatch();
   return (
     <>
-      <button onClick={e => setState(Math.random())}>Add Count</button>
+      <button onClick={e => addCount(1)}>Add Count</button>
     </>
-  )
+  );
 }
